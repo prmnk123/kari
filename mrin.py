@@ -478,6 +478,37 @@ def list_authorized_users(message):
 
     bot.reply_to(message, response, parse_mode='Markdown')
     
+# Add a new command to send the history file
+@bot.message_handler(commands=['history'])
+def send_history_file(message):
+    user_id = str(message.chat.id)
+    
+    # Ensure only admins can use this command
+    if user_id not in admin_id:
+        bot.reply_to(
+            message,
+            "‼️ *𝗢𝗻𝗹𝘆 𝗕𝗼𝗧 𝗢𝗪𝗡𝗘𝗥 𝗖𝗮𝗻 𝗥𝘂𝗻 𝗧𝗵𝗶𝘀 𝗖𝗼𝗺𝗺𝗮𝗻𝗱* ‼️",
+            parse_mode='Markdown'
+        )
+        return
+
+    # Ensure the history file exists, create it if not
+    try:
+        if not os.path.exists("key_history.txt"):
+            with open("key_history.txt", "w") as file:
+                file.write("")  # Create an empty file
+            bot.reply_to(message, "*📄 𝗞𝗘𝗬 𝗛𝗶𝘀𝘁𝗼𝗿𝘆 𝗙𝗶𝗹𝗲 𝘄𝗮𝘀 𝗺𝗶𝘀𝘀𝗶𝗻𝗴, 𝘀𝗼 𝗮 𝗻𝗲𝘄 𝗙𝗶𝗹𝗲 𝘄𝗮𝘀 𝗴𝗲𝗻𝗲𝗿𝗮𝘁𝗲𝗱 👍*", parse_mode='Markdown')
+
+        # Check if the file is empty or has content
+        if os.stat("key_history.txt").st_size > 0:
+            with open("key_history.txt", "rb") as file:
+                bot.reply_to(message, "*📂 𝗞𝗘𝗬 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗜𝗢𝗡 𝗛𝗜𝗦𝗧𝗢𝗥𝗬 𝗙𝗢𝗨𝗡𝗗*", parse_mode='Markdown')
+                bot.send_document(message.chat.id, file)
+        else:
+            bot.reply_to(message, "*📂 𝗡𝗢 𝗞𝗘𝗬 𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗜𝗢𝗡 𝗛𝗜𝗦𝗧𝗢𝗥𝗬 𝗙𝗢𝗨𝗡𝗗*", parse_mode='Markdown')
+    except Exception as e:
+        bot.reply_to(message, f"{e}")
+        
 @bot.message_handler(commands=['remove'])
 def remove_user(message):
     user_id = str(message.chat.id)
